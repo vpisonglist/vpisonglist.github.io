@@ -455,10 +455,3 @@ function updateSortTabStyles() {
     });
   });
 </script>
-
-window.addEventListener("popstate", () => {
-  const singerFromURL = getQueryParam("singer");
-  selectedSinger = singerFromURL && singers.includes(singerFromURL) ? singerFromURL : null;
-  renderTable(1);
-  renderSingerButtons();
-});
