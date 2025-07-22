@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ぶいぱい3期生 歌唱楽曲検索</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 28px;
+    }
+    .sortable .sort-icon {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: #999;
+      user-select: none;
+      line-height: 1;
+    }
+    .sortable.asc .sort-icon {
+      color: #2563eb;
+    }
+    .sortable.desc .sort-icon {
+      color: #dc2626;
+    }
+    .sortable.clear .sort-icon {
+      color: #666666;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+  <header class="bg-slate-600 text-white py-4">
+    <h1 class="text-2xl text-center font-bold">ぶいぱい3期生 歌唱楽曲検索</h1>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <div id="singer-buttons" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 mb-4"></div>
+    <div class="flex justify-between items-center flex-wrap gap-2 mb-4">
+      <div id="format-buttons" class="flex flex-wrap gap-2 text-sm"></div>
+      <div id="sort-tabs" class="flex gap-2">
+        <button id="sort-title-btn" class="px-3 py-1 rounded border font-medium bg-white text-gray-800 hover:bg-slate-100">曲一覧</button>
+        <button id="sort-artist-btn" class="px-3 py-1 rounded border font-medium bg-white text-gray-800 hover:bg-slate-100">アーティスト一覧</button>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 mb-6">
+      <div class="relative">
+        <select id="search-type" class="block appearance-none w-full bg-white border border-gray-400 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:ring focus:border-blue-300">
+          <option value="title">曲名</option>
+          <option value="artist">アーティスト</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548l4.484 4.49 4.484-4.49L15.5 9 10 14.5 4.5 9z"/></svg>
+        </div>
+      </div>
+      <input type="text" id="search-box" placeholder="検索ワードを入力" class="flex-1 p-2 border border-gray-300 rounded" />
+    </div>
+
+    <div class="text-sm text-gray-600 mb-2" id="current-filters"></div>
+    <div id="result-count" class="text-right text-sm text-gray-600 mb-2"></div>
+
+    <div class="grid grid-cols-[60px_140px_230px_200px_70px_430px_120px] font-semibold text-gray-700 text-sm mb-2 py-2 px-0 bg-gray-200 rounded">
+      <div class="text-center"></div>
+      <div class="px-2">歌唱者</div>
+      <div class="px-2 sortable clear" data-key="title">曲名
+        <span class="sort-icon">⇅</span>
+      </div>
+      <div class="px-2 sortable clear" data-key="artist">アーティスト
+        <span class="sort-icon">⇅</span>
+      </div>
+      <div class="px-2">形式</div>
+      <div class="px-2">配信タイトル</div>
+      <div class="px-2 sortable clear" data-key="date">公開日
+        <span class="sort-icon">⇅</span>
+      </div>
+    </div>
+
+    <div id="song-list" class="space-y-2"></div>
+    <div id="pagination" class="flex justify-center space-x-2 mt-8"></div>
+  </main>
+
+  <footer class="bg-gray-800 text-white text-center py-4 mt-10 text-sm">
+    <p>&copy; 2025 ぶいぱい3期生 歌唱楽曲検索 / 本サイトは非公式です。</p>
+    <p><a href="https://x.com/tmmy_LY" class="underline">運営：ともみや (@tmmy_LY)</a></p>
+  </footer>
+
+  <script>
+
+  function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+  }
+
+    const rowsPerPage = 20;
+    let currentPage = 1;
+    let allSongs = [];
+    let selectedSinger = null;
+    let selectedFormat = null;
+    let sortKey = null;
+    let sortOrder = null;
+
+    const singers = ["ホーム", "銀棘ぐみ", "彩歌すいれん", "猫撫こぜに", "蜂蜜ぷりん", "花百合ちゅみ", "やまだなのだ", "コマチガブ"];
+    const formats = ["配信", "ショート", "歌ってみた"];
+
+    const searchBox = document.getElementById('search-box');
+    const searchType = document.getElementById('search-type');
+    const songList = document.getElementById('song-list');
+    const pagination = document.getElementById('pagination');
+    const resultCount = document.getElementById('result-count');
+    const currentFilters = document.getElementById('current-filters');
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+    }
+
+function renderSingerButtons() {
+  const container = document.getElementById("singer-buttons");
+  container.innerHTML = singers.map(label => {
+    const isActive = selectedSinger === null ? label === "ホーム" : label === selectedSinger;
+    return `<button class="w-full px-4 py-2 rounded text-sm font-medium border transition text-center ${isActive ? 'bg-slate-500 text-white' : 'bg-white text-gray-800 hover:bg-slate-100'}" data-singer="${label}">${label}</button>`;
+  }).join('');
+  container.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const selected = btn.dataset.singer;
+      currentPage = 1;
+      selectedSinger = selected === "ホーム" ? null : selected;
+
+      // URL に反映させる（履歴も push）
+      const params = new URLSearchParams(window.location.search);
+      if (selectedSinger) {
+        params.set("singer", selectedSinger);
+      } else {
+        params.delete("singer");
+      }
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      history.pushState(null, "", newUrl);
+
+      renderTable(currentPage);
+      renderSingerButtons();
+    });
+  });
+}
+    function renderFormatButtons() {
+      const container = document.getElementById("format-buttons");
+      container.innerHTML = formats.map(format => {
+        const isActive = selectedFormat === format;
+        return `<button class="px-3 py-1 rounded border font-medium transition ${isActive ? 'bg-slate-400 text-white' : 'bg-white text-gray-800 hover:bg-slate-100'}" data-format="${format}">${format}</button>`;
+      }).join('');
+      container.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const selected = btn.dataset.format;
+          selectedFormat = selectedFormat === selected ? null : selected;
+          renderTable(1);
+          renderFormatButtons();
+        });
+      });
+    }
+
+async function fetchAllSongData() {
+  const files = ['data/suiren.json', 'data/kozeni.json', 'data/chumi.json', 'data/purin.json'];
+  const results = await Promise.all(files.map(f => fetch(f).then(res => res.json())));
+  allSongs = results.flat();
+  allSongs.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+  // URLから選択状態を復元
+  const initialSinger = getQueryParam("singer");
+  if (initialSinger && singers.includes(initialSinger)) {
+    selectedSinger = initialSinger;
+  }
+
+  renderTable(currentPage);
+  renderSingerButtons();
+  renderFormatButtons();
+  attachSortListeners();
+}
+
+function filterSongs() {
+  const query = searchBox.value.toLowerCase().trim();
+  const type = searchType.value;
+
+  return allSongs.filter(song => {
+    const rawStr = type === "title" ? song.title : song.artist;
+    // 数値の場合も文字列化してトリム＆小文字化
+    const targetStr = String(rawStr).trim().toLowerCase();
+
+    const keywordMatch = targetStr.includes(query);
+
+    const singerMatch = selectedSinger === null || song.singer.split(',').map(s => s.trim()).includes(selectedSinger);
+    const formatMatch = !selectedFormat || song.format === selectedFormat;
+
+    return keywordMatch && singerMatch && formatMatch;
+  });
+}
+
+function renderTable(page = 1) {
+  let filtered = filterSongs();
+
+  // 並び替え処理
+  if (sortKey && sortOrder) {
+    filtered.sort((a,b) => {
+      let va = a[sortKey];
+      let vb = b[sortKey];
+      if (sortKey === 'date') {
+        va = new Date(va);
+        vb = new Date(vb);
+      } else {
+        va = (typeof va === 'string') ? va.toLowerCase() : '';
+        vb = (typeof vb === 'string') ? vb.toLowerCase() : '';
+      }
+      if (va < vb) return sortOrder === 'asc' ? -1 : 1;
+      if (va > vb) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  } else {
+    filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+  }
+
+  let pageSongs;
+  let start, end;
+
+  const isAllView = currentSpecialTab !== null;
+
+  if (selectedSinger === null && !isAllView) {
+    start = (page - 1) * rowsPerPage;
+    end = Math.min(start + rowsPerPage, filtered.length);
+    pageSongs = filtered.slice(start, end);
+  } else {
+    pageSongs = filtered;
+  }
+
+  // 件数表示
+  resultCount.textContent =
+    selectedSinger === null && !isAllView
+      ? `全${filtered.length}件中 ${filtered.length === 0 ? 0 : (start + 1)}件目〜${end}件目を表示`
+      : `全${filtered.length}件を表示`;
+
+  currentFilters.textContent = `表示中：${selectedSinger || '全員'} / ${selectedFormat || 'すべての形式'}`;
+
+
+      songList.innerHTML = pageSongs.map(song => `
+        <div class="grid grid-cols-[60px_140px_230px_200px_70px_430px_120px] bg-white rounded shadow-sm py-2 px-0 hover:bg-slate-50 transition hover:shadow-lg">
+          <div class="flex justify-center items-center">
+            <a href="${song.link}" target="_blank" rel="noopener noreferrer">
+              <img src="images/動画再生ボタン.png" alt="リンク" class="w-5 h-5" />
+            </a>
+          </div>
+          <div class="flex items-center px-2">${song.singer}</div>
+          <div class="flex items-center px-2">${song.title}</div>
+          <div class="flex items-center px-2">${song.artist}</div>
+          <div class="flex items-center px-2">
+            <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">${song.format}</span>
+          </div>
+          <div class="flex items-center px-5 text-xs">${song.livetitle}</div>
+          <div class="flex items-center text-sm">${formatDate(song.date)}</div>
+        </div>
+      `).join('');
+
+  // ページネーション表示
+  if (selectedSinger === null && !isAllView) {
+    renderPagination(filtered.length, page);
+  } else {
+    pagination.innerHTML = '';
+  }
+
+      updateSortIcons();
+    }
+
+    function renderPagination(totalItems, activePage) {
+      const totalPages = Math.ceil(totalItems / rowsPerPage);
+      pagination.innerHTML = '';
+
+      function createPageButton(label, page, isActive = false, isEllipsis = false) {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        btn.disabled = isEllipsis;
+        btn.className = isEllipsis
+          ? 'px-3 py-1 text-gray-500 cursor-default'
+          : `px-3 py-1 border rounded text-sm ${isActive ? 'bg-slate-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-200'}`;
+        if (!isEllipsis) {
+          btn.addEventListener('click', () => {
+            currentPage = page;
+            renderTable(currentPage);
+          });
+        }
+        pagination.appendChild(btn);
+      }
+
+      const showRange = 2;
+      if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) createPageButton(i, i, i === activePage);
+      } else {
+        createPageButton(1, 1, activePage === 1);
+        if (activePage > showRange + 2) createPageButton('…', null, false, true);
+        const start = Math.max(2, activePage - showRange);
+        const end = Math.min(totalPages - 1, activePage + showRange);
+        for (let i = start; i <= end; i++) createPageButton(i, i, i === activePage);
+        if (activePage < totalPages - showRange - 1) createPageButton('…', null, false, true);
+        createPageButton(totalPages, totalPages, activePage === totalPages);
+      }
+    }
+
+    function updateSortIcons() {
+      document.querySelectorAll('.sortable').forEach(th => {
+        const key = th.dataset.key;
+        const icon = th.querySelector('.sort-icon');
+        th.classList.remove('asc', 'desc', 'clear');
+        if (sortKey === key) {
+          if (sortOrder === 'asc') {
+            th.classList.add('asc');
+            icon.textContent = '▲';
+          } else if (sortOrder === 'desc') {
+            th.classList.add('desc');
+            icon.textContent = '▼';
+          }
+        } else {
+          th.classList.add('clear');
+          icon.textContent = '⇅';
+        }
+      });
+    }
+
+    function attachSortListeners() {
+      document.querySelectorAll('.sortable').forEach(th => {
+        th.addEventListener('click', () => {
+          const key = th.dataset.key;
+          if (sortKey === key) {
+            sortOrder = sortOrder === 'asc' ? 'desc' : sortOrder === 'desc' ? null : 'asc';
+            if (!sortOrder) sortKey = null;
+          } else {
+            sortKey = key;
+            sortOrder = 'asc';
+          }
+          currentPage = 1;
+          renderTable(currentPage);
+        });
+      });
+    }
+
+    searchBox.addEventListener('input', () => renderTable(1));
+    searchType.addEventListener('change', () => renderTable(1));
+    fetchAllSongData();
+
+let currentSpecialTab = null;
+
+document.getElementById("sort-title-btn").addEventListener("click", () => {
+  if (currentSpecialTab === 'title') {
+    currentSpecialTab = null;
+    sortKey = null;
+    sortOrder = null;
+    selectedSinger = null;
+  } else {
+    currentSpecialTab = 'title';
+    sortKey = 'title';
+    sortOrder = 'asc';
+    selectedSinger = null;
+  }
+  currentPage = 1;
+  renderTable(currentPage);
+  renderSingerButtons();
+  updateSortTabStyles();
+});
+
+document.getElementById("sort-artist-btn").addEventListener("click", () => {
+  if (currentSpecialTab === 'artist') {
+    currentSpecialTab = null;
+    sortKey = null;
+    sortOrder = null;
+    selectedSinger = null;
+  } else {
+    currentSpecialTab = 'artist';
+    sortKey = 'artist';
+    sortOrder = 'asc';
+    selectedSinger = null;
+  }
+  currentPage = 1;
+  renderTable(currentPage);
+  renderSingerButtons();
+  updateSortTabStyles();
+});
+
+function updateSortTabStyles() {
+  const titleBtn = document.getElementById("sort-title-btn");
+  const artistBtn = document.getElementById("sort-artist-btn");
+
+  // 一旦すべてのスタイルをリセット
+  [titleBtn, artistBtn].forEach(btn => {
+    btn.className = "px-3 py-1 rounded border font-medium";
+    btn.classList.add("bg-white", "text-gray-800", "hover:bg-slate-100");
+  });
+
+  if (currentSpecialTab === "title") {
+    titleBtn.classList.remove("bg-white", "text-gray-800", "hover:bg-slate-100");
+    titleBtn.classList.add("bg-slate-500", "text-white");
+  }
+
+  if (currentSpecialTab === "artist") {
+    artistBtn.classList.remove("bg-white", "text-gray-800", "hover:bg-slate-100");
+    artistBtn.classList.add("bg-slate-500", "text-white");
+  }
+}
+
+
+
+  </script>
+</body>
+</html>
+
+<!-- トップへ戻るボタン -->
+<button id="scrollTopBtn" title="トップへ戻る">↑</button>
+
+<style>
+  #scrollTopBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    font-size: 20px;
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 10px 15px;
+    cursor: pointer;
+    display: none;
+    transition: opacity 0.3s ease;
+  }
+
+  #scrollTopBtn:hover {
+    background-color: #333;
+  }
+</style>
+
+<script>
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+  window.addEventListener("scroll", () => {
+    if (document.documentElement.scrollTop > 100) {
+      scrollTopBtn.style.display = "block";
+    } else {
+      scrollTopBtn.style.display = "none";
+    }
+  });
+
+  scrollTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+</script>
+
+window.addEventListener("popstate", () => {
+  const singerFromURL = getQueryParam("singer");
+  selectedSinger = singerFromURL && singers.includes(singerFromURL) ? singerFromURL : null;
+  renderTable(1);
+  renderSingerButtons();
+});
