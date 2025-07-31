@@ -50,12 +50,23 @@
     background-color: transparent; /* トラック部分（無地でよい） */
   }
   </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9T1H1RN85L"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9T1H1RN85L');
+</script>
+
 </head>
 
 <!-- <body class="bg-gray-100 text-gray-800">
   <header class="bg-slate-600 text-white py-4">
     <h1 class="text-2xl text-center font-bold">
-      <a href="https://example.com" class="hover:underline">
+      <a href="https://vpisonglist.github.io/" class="hover:underline">
         ぶいぱい3期生 歌唱楽曲検索
       </a>
     </h1>
@@ -72,12 +83,19 @@
   />
   <!-- 黒の半透明オーバーレイ -->
   <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+
+  <!-- ヘッダー文字＋サブテキスト -->
   <div class="absolute inset-0 flex items-center justify-center px-4">
-    <h1
-      class="text-3xl md:text-2xl font-bold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] text-center"
-    >
-      ぶいぱい3期生 歌唱楽曲検索
-    </h1>
+    <div class="text-center mt-8 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+      <h1 class="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold">
+        <a href="https://vpisonglist.github.io/" class="hover:underline">
+          ぶいぱい3期生 歌唱楽曲検索
+        </a>
+      </h1>
+      <span class="block text-xl font-normal mt-2">
+        【非公式ファンサイト】
+      </span>
+    </div>
   </div>
 </header>
 
@@ -117,7 +135,7 @@
   <!-- <div class="overflow-x-auto box-border"> -->
     <div id="scrollable" class="overflow-x-auto overflow-y-hidden box-border cursor-grab">
     <div class="min-w-[1240px] box-border">
-    <div class="grid grid-cols-[60px_140px_230px_200px_70px_420px_120px] font-semibold text-gray-700 text-sm mb-2 py-2 px-0 bg-gray-200 rounded box-border">
+    <div class="grid grid-cols-[60px_140px_230px_200px_70px_450px_90px] font-semibold text-gray-700 text-sm mb-2 py-2 px-0 bg-gray-200 rounded box-border">
       <div class="text-center">再生</div>
       <div><div class="px-2 truncate">歌唱者</div></div>
       <div><div class="px-2 truncate sortable clear" data-key="title">曲名 <i class="sort-icon fa-solid fa-sort"></i></div></div>
@@ -159,7 +177,7 @@
     let sortKey = null;
     let sortOrder = null;
 
-    const singers = ["ホーム", "猫撫こぜに", "花百合ちゅみ", "彩歌すいれん", "やまだなのだ", "コマチガブ", "蜂蜜ぷりん", "銀棘ぐみ" , "その他"];
+    const singers = ["ホーム", "猫撫こぜに", "花百合ちゅみ", "彩歌すいれん", "コマチガブ", "やまだなのだ", "蜂蜜ぷりん", "銀棘ぐみ" , "その他"];
     const formats = ["配信", "ショート", "歌ってみた"];
 
     const searchBox = document.getElementById('search-box');
@@ -198,8 +216,12 @@ function updateClearButton() {
 
     function formatDate(dateStr) {
       const d = new Date(dateStr);
-      return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}.${m}.${day}`;
     }
+
 
 function renderSingerButtons() {
   const container = document.getElementById("singer-buttons");
@@ -334,7 +356,7 @@ function renderTable(page = 1) {
 
 
       songList.innerHTML = pageSongs.map(song => `
-        <div class="grid grid-cols-[60px_140px_230px_200px_70px_420px_120px] bg-white rounded shadow-sm py-2 px-0 hover:bg-slate-50 transition hover:shadow-lg">
+        <div class="grid grid-cols-[60px_140px_230px_200px_70px_450px_90px] bg-white rounded shadow-sm py-2 px-0 hover:bg-slate-50 transition hover:shadow-lg">
           <div class="flex justify-center items-center">
             <a href="${song.link}" target="_blank" rel="noopener noreferrer">
               <i class="fa-brands fa-youtube text-gray-600 text-2xl"></i>
