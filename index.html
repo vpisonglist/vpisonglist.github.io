@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ぶいぱい3期生 歌唱楽曲検索</title>
+  <title>ぶいぱい3期生 歌唱楽曲検索 【非公式ファンサイト】</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/11ca8aef34.js" crossorigin="anonymous"></script>
   <style>
     .sortable {
       cursor: pointer;
@@ -31,16 +32,41 @@
     .sortable.clear .sort-icon {
       color: #666666;
     }
+
+  #scrollable {
+    scrollbar-width: auto; /* Firefox */
+  }
+
+  #scrollable::-webkit-scrollbar {
+    height: 8px; /* スクロールバーの高さを設定 */
+  }
+
+  #scrollable::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 100, 100, 0.5); /* スクロールバーのつまみ */
+    border-radius: 4px;
+  }
+
+  #scrollable::-webkit-scrollbar-track {
+    background-color: transparent; /* トラック部分（無地でよい） */
+  }
   </style>
 </head>
 
 <body class="bg-gray-100 text-gray-800">
   <header class="bg-slate-600 text-white py-4">
-    <h1 class="text-2xl text-center font-bold">ぶいぱい3期生 歌唱楽曲検索</h1>
+    <h1 class="text-2xl text-center font-bold">
+      <a href="https://example.com" class="hover:underline">
+        ぶいぱい3期生 歌唱楽曲検索
+      </a>
+    </h1>
+    <span class="block text-sm text-center font-normal mt-1">
+      【非公式ファンサイト】
+    </span>
   </header>
 
+
   <main class="max-w-7xl mx-auto px-4 py-6">
-    <div id="singer-buttons" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 mb-4"></div>
+    <div id="singer-buttons" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-9 gap-2 mb-4"></div>
     <div class="flex justify-between items-center flex-wrap gap-2 mb-4">
       <div id="format-buttons" class="flex flex-wrap gap-2 text-sm"></div>
       <div id="sort-tabs" class="flex gap-2">
@@ -50,44 +76,56 @@
     </div>
 
     <div class="flex items-center gap-2 mb-6">
-      <div class="relative">
-        <select id="search-type" class="block appearance-none w-full bg-white border border-gray-400 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:ring focus:border-blue-300">
-          <option value="title">曲名</option>
-          <option value="artist">アーティスト</option>
-        </select>
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-          <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548l4.484 4.49 4.484-4.49L15.5 9 10 14.5 4.5 9z"/></svg>
-        </div>
-      </div>
-      <input type="text" id="search-box" placeholder="検索ワードを入力" class="flex-1 p-2 border border-gray-300 rounded" />
+  <div class="relative w-32">
+    <select id="search-type" class="block appearance-none w-full bg-white border border-gray-400 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:ring focus:border-blue-300">
+      <option value="title">曲名</option>
+      <option value="artist">アーティスト</option>
+    </select>
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+      <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <path d="M5.516 7.548l4.484 4.49 4.484-4.49L15.5 9 10 14.5 4.5 9z"/>
+      </svg>
     </div>
+  </div>
+
+  <div class="flex items-center flex-1">
+    <input type="text" id="search-box" placeholder="検索ワードを入力" class="flex-grow p-2 border border-gray-300 rounded" />
+    <button id="clear-search" type="button" class="ml-2 p-2 bg-gray-300 rounded hover:bg-gray-400" style="display:none; user-select:none;">✕</button>
+  </div>
+</div>
 
     <div class="text-sm text-gray-600 mb-2" id="current-filters"></div>
     <div id="result-count" class="text-right text-sm text-gray-600 mb-2"></div>
 
-    <div class="grid grid-cols-[60px_140px_230px_200px_70px_430px_120px] font-semibold text-gray-700 text-sm mb-2 py-2 px-0 bg-gray-200 rounded">
-      <div class="text-center"></div>
-      <div class="px-2">歌唱者</div>
-      <div class="px-2 sortable clear" data-key="title">曲名
-        <span class="sort-icon">⇅</span>
-      </div>
-      <div class="px-2 sortable clear" data-key="artist">アーティスト
-        <span class="sort-icon">⇅</span>
-      </div>
-      <div class="px-2">形式</div>
-      <div class="px-2">配信タイトル</div>
-      <div class="px-2 sortable clear" data-key="date">公開日
-        <span class="sort-icon">⇅</span>
-      </div>
+<!-- 横スクロール対応コンテナ -->
+  <!-- <div class="overflow-x-auto box-border"> -->
+    <div id="scrollable" class="overflow-x-auto overflow-y-hidden box-border cursor-grab">
+    <div class="min-w-[1240px] box-border">
+    <div class="grid grid-cols-[60px_140px_230px_200px_70px_420px_120px] font-semibold text-gray-700 text-sm mb-2 py-2 px-0 bg-gray-200 rounded box-border">
+      <div class="text-center">再生</div>
+      <div><div class="px-2 truncate">歌唱者</div></div>
+      <div><div class="px-2 truncate sortable clear" data-key="title">曲名 <i class="sort-icon fa-solid fa-sort"></i></div></div>
+      <div><div class="px-2 truncate sortable clear" data-key="artist">アーティスト <i class="sort-icon fa-solid fa-sort"></i></div></div>
+      <div><div class="px-2 truncate">形式</div></div>
+      <div><div class="px-2 truncate">配信タイトル</div></div>
+      <div><div class="px-2 truncate sortable clear" data-key="date">公開日 <i class="sort-icon fa-solid fa-sort"></i></div></div>
     </div>
+    <div id="song-list" class="space-y-2"></div>
+    <div id="pagination" class="flex justify-center space-x-2 mt-8"></div>
+  </div>
+</div>
 
     <div id="song-list" class="space-y-2"></div>
     <div id="pagination" class="flex justify-center space-x-2 mt-8"></div>
+    </div>
+    </div>
   </main>
 
   <footer class="bg-gray-800 text-white text-center py-4 mt-10 text-sm">
-    <p>&copy; 2025 ぶいぱい3期生 歌唱楽曲検索 / 本サイトは非公式です。</p>
-    <p><a href="https://x.com/tmmy_LY" class="underline">運営：ともみや (@tmmy_LY)</a></p>
+    <p>&copy; 2025 ぶいぱい3期生 歌唱楽曲検索 / 本サイトは非公式です。<br>
+      本サイトは予告なく内容を変更する場合があります。<br>
+      エラー、漏れ、その他要望等の連絡は下記Ｘ(旧Twitter)アカウント宛にお願いします。</p>
+    <p><a href="https://x.com/tmmy_LY" class="underline">運営：ともみや (@tmmy_LY)<i class="fa-brands fa-x-twitter"></i></a></p>
   </footer>
 
   <script>
@@ -105,11 +143,38 @@
     let sortKey = null;
     let sortOrder = null;
 
-    const singers = ["ホーム", "銀棘ぐみ", "彩歌すいれん", "猫撫こぜに", "蜂蜜ぷりん", "花百合ちゅみ", "やまだなのだ", "コマチガブ"];
+    const singers = ["ホーム", "猫撫こぜに", "花百合ちゅみ", "彩歌すいれん", "やまだなのだ", "コマチガブ", "蜂蜜ぷりん", "銀棘ぐみ" , "その他"];
     const formats = ["配信", "ショート", "歌ってみた"];
 
     const searchBox = document.getElementById('search-box');
     const searchType = document.getElementById('search-type');
+
+    const clearBtn = document.getElementById("clear-search");
+
+if (clearBtn && searchBox) {
+  // クリアボタン押下時の処理
+  clearBtn.addEventListener("click", () => {
+    searchBox.value = "";
+    updateClearButton();
+    renderTable(1);
+  });
+
+  // 入力時にクリアボタンの表示非表示切り替え
+  searchBox.addEventListener("input", () => {
+    updateClearButton();
+    renderTable(1);
+  });
+
+  // 初期表示時のボタン表示状態を設定
+  updateClearButton();
+}
+
+// クリアボタンの表示を切り替える関数
+function updateClearButton() {
+  if (!clearBtn || !searchBox) return;
+  clearBtn.style.display = searchBox.value.trim() ? "inline-block" : "none";
+}
+
     const songList = document.getElementById('song-list');
     const pagination = document.getElementById('pagination');
     const resultCount = document.getElementById('result-count');
@@ -187,12 +252,20 @@ function filterSongs() {
 
   return allSongs.filter(song => {
     const rawStr = type === "title" ? song.title : song.artist;
-    // 数値の場合も文字列化してトリム＆小文字化
     const targetStr = String(rawStr).trim().toLowerCase();
-
     const keywordMatch = targetStr.includes(query);
 
-    const singerMatch = selectedSinger === null || song.singer.split(',').map(s => s.trim()).includes(selectedSinger);
+    const singerList = song.singer.split(',').map(s => s.trim());
+
+    const knownSingers = ["銀棘ぐみ", "彩歌すいれん", "猫撫こぜに", "蜂蜜ぷりん", "花百合ちゅみ", "やまだなのだ", "コマチガブ"];
+
+    const singerMatch =
+      selectedSinger === null
+        ? true
+        : selectedSinger === "その他"
+          ? singerList.some(s => !knownSingers.includes(s))  // ←ここが「含む」に変更された点
+          : singerList.includes(selectedSinger);
+
     const formatMatch = !selectedFormat || song.format === selectedFormat;
 
     return keywordMatch && singerMatch && formatMatch;
@@ -245,20 +318,20 @@ function renderTable(page = 1) {
 
 
       songList.innerHTML = pageSongs.map(song => `
-        <div class="grid grid-cols-[60px_140px_230px_200px_70px_430px_120px] bg-white rounded shadow-sm py-2 px-0 hover:bg-slate-50 transition hover:shadow-lg">
+        <div class="grid grid-cols-[60px_140px_230px_200px_70px_420px_120px] bg-white rounded shadow-sm py-2 px-0 hover:bg-slate-50 transition hover:shadow-lg">
           <div class="flex justify-center items-center">
             <a href="${song.link}" target="_blank" rel="noopener noreferrer">
-              <img src="images/動画再生ボタン.png" alt="リンク" class="w-5 h-5" />
+              <i class="fa-brands fa-youtube text-gray-600 text-2xl"></i>
             </a>
           </div>
-          <div class="flex items-center px-2">${song.singer}</div>
+          <div class="flex items-center px-2">${song.singer.split(',').map(s => s.trim()).join('<br>')}</div>
           <div class="flex items-center px-2">${song.title}</div>
           <div class="flex items-center px-2">${song.artist}</div>
           <div class="flex items-center px-2">
             <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">${song.format}</span>
           </div>
-          <div class="flex items-center px-5 text-xs">${song.livetitle}</div>
-          <div class="flex items-center text-sm">${formatDate(song.date)}</div>
+          <div class="flex items-center px-2 text-xs">${song.livetitle}</div>
+          <div class="flex items-center px-2 text-sm">${formatDate(song.date)}</div>
         </div>
       `).join('');
 
@@ -306,25 +379,28 @@ function renderTable(page = 1) {
       }
     }
 
-    function updateSortIcons() {
-      document.querySelectorAll('.sortable').forEach(th => {
-        const key = th.dataset.key;
-        const icon = th.querySelector('.sort-icon');
-        th.classList.remove('asc', 'desc', 'clear');
-        if (sortKey === key) {
-          if (sortOrder === 'asc') {
-            th.classList.add('asc');
-            icon.textContent = '▲';
-          } else if (sortOrder === 'desc') {
-            th.classList.add('desc');
-            icon.textContent = '▼';
-          }
-        } else {
-          th.classList.add('clear');
-          icon.textContent = '⇅';
-        }
-      });
+function updateSortIcons() {
+  document.querySelectorAll('.sortable').forEach(th => {
+    const key = th.dataset.key;
+    const icon = th.querySelector('.sort-icon');
+
+    th.classList.remove('asc', 'desc', 'clear');
+    icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
+
+    if (sortKey === key) {
+      if (sortOrder === 'asc') {
+        th.classList.add('asc');
+        icon.classList.add('fa-sort-up');
+      } else if (sortOrder === 'desc') {
+        th.classList.add('desc');
+        icon.classList.add('fa-sort-down');
+      }
+    } else {
+      th.classList.add('clear');
+      icon.classList.add('fa-sort');
     }
+  });
+}
 
     function attachSortListeners() {
       document.querySelectorAll('.sortable').forEach(th => {
@@ -343,10 +419,15 @@ function renderTable(page = 1) {
       });
     }
 
+    
+
     searchBox.addEventListener('input', () => renderTable(1));
+
+    
+
     searchType.addEventListener('change', () => renderTable(1));
     fetchAllSongData();
-
+    
 let currentSpecialTab = null;
 
 document.getElementById("sort-title-btn").addEventListener("click", () => {
@@ -406,8 +487,6 @@ function updateSortTabStyles() {
   }
 }
 
-
-
   </script>
 </body>
 </html>
@@ -454,4 +533,73 @@ function updateSortTabStyles() {
       behavior: "smooth"
     });
   });
+</script>
+
+<script>
+const scrollable = document.getElementById('scrollable');
+
+let isDragging = false;
+let startX, scrollLeft;
+
+function canScrollHorizontally(element) {
+  return element.scrollWidth > element.clientWidth;
+}
+
+function enableDragScroll() {
+  scrollable.style.cursor = 'grab';
+
+  scrollable.addEventListener('mousedown', onMouseDown);
+  scrollable.addEventListener('mouseleave', onMouseLeave);
+  scrollable.addEventListener('mouseup', onMouseUp);
+  scrollable.addEventListener('mousemove', onMouseMove);
+}
+
+function disableDragScroll() {
+  scrollable.style.cursor = 'auto';
+
+  scrollable.removeEventListener('mousedown', onMouseDown);
+  scrollable.removeEventListener('mouseleave', onMouseLeave);
+  scrollable.removeEventListener('mouseup', onMouseUp);
+  scrollable.removeEventListener('mousemove', onMouseMove);
+}
+
+function onMouseDown(e) {
+  isDragging = true;
+  startX = e.pageX - scrollable.offsetLeft;
+  scrollLeft = scrollable.scrollLeft;
+  scrollable.style.cursor = 'grabbing';
+  e.preventDefault();  // 選択妨げるため（ドラッグ用）
+}
+
+function onMouseLeave() {
+  isDragging = false;
+  scrollable.style.cursor = 'grab';
+}
+
+function onMouseUp() {
+  isDragging = false;
+  scrollable.style.cursor = 'grab';
+}
+
+function onMouseMove(e) {
+  if (!isDragging) return;
+  e.preventDefault();
+  const x = e.pageX - scrollable.offsetLeft;
+  const walk = (x - startX) * 1; // スクロール速度調整
+  scrollable.scrollLeft = scrollLeft - walk;
+}
+
+// 初期チェック
+function updateDragScroll() {
+  if (canScrollHorizontally(scrollable)) {
+    enableDragScroll();
+  } else {
+    disableDragScroll();
+  }
+}
+
+// ページロード時とリサイズ時に判定
+window.addEventListener('load', updateDragScroll);
+window.addEventListener('resize', updateDragScroll);
+
 </script>
