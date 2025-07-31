@@ -62,28 +62,34 @@
 </script>
 
 </head>
+<header class="relative mx-auto max-w-[1240px] w-full bg-zinc-700 py-8">
+  <!-- 黒の半透明オーバーレイや画像は削除 -->
 
-<header class="w-full bg-gradient-to-r from-[#c7c7c7] via-[#5a5a5a] to-[#c7c7c7] relative">
-  <div class="relative mx-auto w-full max-w-[800px]">
-    <img
-      src="images/vpi3rd_header.jpg"
-      alt="ヘッダー画像"
-      class="w-full h-auto object-contain shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-    />
-    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-    <div class="absolute inset-0 flex items-center justify-center px-4">
-      <div class="text-center mt-8 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
-        <h1 class="text-lg sm:text-xl md:text-3xl lg:text-4xl font-bold">
-          <a href="https://vpisonglist.github.io/" class="hover:underline">
-            ぶいぱい3期生 歌唱楽曲検索
-          </a>
-        </h1>
-        <span class="block text-xs sm:text-sm md:text-base lg:text-lg font-normal mt-2">
-          【非公式ファンサイト】
-        </span>
-      </div>
+  <!-- ヘッダー文字＋サブテキスト -->
+  <div class="flex items-center justify-center px-4 min-h-[120px]">
+    <div class="text-center text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+      <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+        <a href="https://vpisonglist.github.io/" class="hover:underline">
+          ぶいぱい3期生 歌唱楽曲検索
+        </a>
+      </h1>
+      <span class="block text-sm sm:text-base md:text-lg lg:text-xl font-normal mt-2">
+        【非公式ファンサイト】
+      </span>
     </div>
   </div>
+
+    <!-- 右下に7つの画像を配置 -->
+  <div class="absolute bottom-2 right-4 flex space-x-2">
+    <img src="images/1_kozeni.png" alt="icon1" class="w-16 h-16 opacity-50" />
+    <img src="images/2_chumi.png" alt="icon2" class="w-16 h-16 opacity-50" />
+    <img src="images/3_suiren.png" alt="icon3" class="w-16 h-16 opacity-50" />
+    <img src="images/4_gabu.png" alt="icon4" class="-w16 h-16  opacity-50" />
+    <img src="images/5_nanoda.png" alt="icon5" class="w-16 h-16  opacity-50" />
+    <img src="images/6_purin.png" alt="icon6" class="w-16 h-16  opacity-50" />
+    <img src="images/7_gumi.png" alt="icon7" class="w-16 h-16  opacity-50" />
+  </div>
+
 </header>
 
   <main class="max-w-7xl mx-auto px-4 py-6">
