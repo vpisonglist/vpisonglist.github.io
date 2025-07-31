@@ -52,7 +52,7 @@
   </style>
 </head>
 
-<body class="bg-gray-100 text-gray-800">
+<!-- <body class="bg-gray-100 text-gray-800">
   <header class="bg-slate-600 text-white py-4">
     <h1 class="text-2xl text-center font-bold">
       <a href="https://example.com" class="hover:underline">
@@ -62,8 +62,24 @@
     <span class="block text-sm text-center font-normal mt-1">
       【非公式ファンサイト】
     </span>
-  </header>
+  </header> -->
 
+<header class="relative mx-auto max-w-[1240px] w-full">
+  <img
+    src="images/vpi3rd_header.jpg"
+    alt="ヘッダー画像"
+    class="w-full h-auto object-cover"
+  />
+  <!-- 黒の半透明オーバーレイ -->
+  <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+  <div class="absolute inset-0 flex items-center justify-center px-4">
+    <h1
+      class="text-3xl md:text-5xl font-bold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] text-center"
+    >
+      ぶいぱい3期生 歌唱楽曲検索
+    </h1>
+  </div>
+</header>
 
   <main class="max-w-7xl mx-auto px-4 py-6">
     <div id="singer-buttons" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-9 gap-2 mb-4"></div>
