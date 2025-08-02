@@ -346,7 +346,6 @@ function renderTable(page = 1) {
 
   currentFilters.textContent = `表示中：${selectedSinger || '全員'} / ${selectedFormat || 'すべての形式'}`;
 
-
       songList.innerHTML = pageSongs.map(song => `
         <div class="grid grid-cols-[60px_140px_230px_200px_100px_420px_90px] bg-white rounded shadow-sm py-2 px-0 hover:bg-slate-50 transition hover:shadow-lg">
           <div class="flex justify-center items-center">
@@ -448,12 +447,8 @@ function updateSortIcons() {
         });
       });
     }
-
-    
-
+  
     searchBox.addEventListener('input', () => renderTable(1));
-
-    
 
     searchType.addEventListener('change', () => renderTable(1));
     fetchAllSongData();
