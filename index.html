@@ -127,7 +127,7 @@
 <!-- 横スクロール対応コンテナ -->
     <div id="scrollable" class="overflow-x-auto overflow-y-hidden box-border cursor-grab">
     <div class="min-w-[1240px] box-border">
-    <div class="grid grid-cols-[60px_140px_230px_200px_100px_420px_90px] font-semibold text-gray-700 text-sm mb-2 py-2 px-0 bg-gray-200 rounded box-border">
+    <div class="grid grid-cols-[60px_140px_230px_200px_100px_420px_90px] font-semibold text-gray-800 text-sm mb-2 py-2 px-0 bg-gray-300 rounded box-border">
       <div class="text-center">再生</div>
       <div><div class="px-2 truncate">歌唱者</div></div>
       <div><div class="px-2 truncate sortable clear" data-key="title">曲名 <i class="sort-icon fa-solid fa-sort"></i></div></div>
@@ -358,7 +358,7 @@ function renderTable(page = 1) {
           <div class="flex items-center px-2">${song.title}</div>
           <div class="flex items-center px-2">${song.artist}</div>
           <div class="flex items-center justify-center px-2">
-            <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">${song.format}</span>
+            <span class="inline-block bg-gray-200 text-gray-700 text-xs font-semibold px-2 py-1 rounded">${song.format}</span>
           </div>
           <div class="flex items-center px-2 text-xs">${song.livetitle}</div>
           <div class="flex items-center px-2 text-sm">${formatDate(song.date)}</div>
