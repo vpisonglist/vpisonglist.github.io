@@ -291,7 +291,7 @@ function renderSingerButtons() {
     }
 
 async function fetchAllSongData() {
-  const files = ['data/suiren.json', 'data/kozeni.json', 'data/chumi.json', 'data/purin.json'];
+  const files = ['data/suiren.json', 'data/kozeni.json', 'data/chumi.json', 'data/purin.json' , 'data/collaboration.json'];
   const results = await Promise.all(files.map(f => fetch(f).then(res => res.json())));
   allSongs = results.flat();
   allSongs.sort((a,b) => new Date(b.date) - new Date(a.date));
