@@ -367,23 +367,26 @@ function renderTable(page = 1) {
 
   currentFilters.textContent = `表示中：${selectedSinger || '全員'} / ${selectedFormat || 'すべての形式'}`;
 
-      songList.innerHTML = pageSongs.map(song => `
-        <div class="grid grid-cols-[60px_140px_230px_200px_100px_420px_90px] bg-white rounded shadow-sm py-2 px-0 hover:bg-slate-50 transition hover:shadow-lg">
-          <div class="flex justify-center items-center">
-            <a href="${song.link}" target="_blank" rel="noopener noreferrer">
-              <i class="fa-brands fa-youtube text-gray-600 text-2xl"></i>
-            </a>
-          </div>
-          <div class="flex items-center px-2">${song.singer.split(',').map(s => s.trim()).join('<br>')}</div>
-          <div class="flex items-center px-2">${song.title}</div>
-          <div class="flex items-center px-2">${song.artist}</div>
-          <div class="flex items-center justify-center px-2">
-            <span class="inline-block bg-gray-200 text-gray-700 text-xs font-semibold px-2 py-1 rounded">${song.format}</span>
-          </div>
-          <div class="flex items-center px-2 text-xs">${song.livetitle}</div>
-          <div class="flex items-center px-2 text-sm">${formatDate(song.date)}</div>
-        </div>
-      `).join('');
+// 修正後の renderTable 内の一部
+songList.innerHTML = pageSongs.map(song => `
+  <div class="grid grid-cols-[60px_140px_230px_200px_100px_420px_90px] bg-white rounded shadow-sm py-2 px-0 hover:bg-slate-50 transition hover:shadow-lg">
+    <div class="flex justify-center items-center">
+      ${song.link ? `
+        <a href="${song.link}" target="_blank" rel="noopener noreferrer">
+          <i class="fa-brands fa-youtube text-gray-600 text-2xl"></i>
+        </a>
+      ` : ''}
+    </div>
+    <div class="flex items-center px-2">${song.singer.split(',').map(s => s.trim()).join('<br>')}</div>
+    <div class="flex items-center px-2">${song.title}</div>
+    <div class="flex items-center px-2">${song.artist}</div>
+    <div class="flex items-center justify-center px-2">
+      <span class="inline-block bg-gray-200 text-gray-700 text-xs font-semibold px-2 py-1 rounded">${song.format}</span>
+    </div>
+    <div class="flex items-center px-2 text-xs">${song.livetitle}</div>
+    <div class="flex items-center px-2 text-sm">${formatDate(song.date)}</div>
+  </div>
+`).join('');
 
   // ページネーション表示
   if (selectedSinger === null && !isAllView) {
