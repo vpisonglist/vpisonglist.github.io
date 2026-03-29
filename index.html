@@ -310,12 +310,13 @@ function filterSongs() {
 
     const knownSingers = ["銀棘ぐみ", "彩歌すいれん", "猫撫こぜに", "蜂蜜ぷりん", "花百合ちゅみ", "やまだなのだ", "コマチガブ"];
 
-    const singerMatch =
-      selectedSinger === null
-        ? true
-        : selectedSinger === "その他"
-          ? singerList.some(s => !knownSingers.includes(s))  // ←ここが「含む」に変更された点
-          : singerList.includes(selectedSinger);
+// filterSongs 関数の中の該当部分を修正
+const singerMatch =
+  selectedSinger === null
+    ? true
+    : selectedSinger === "その他"
+      ? singerList.some(s => !knownSingers.includes(s))
+      : song.singer.includes(selectedSinger); // .includes() で部分一致判定にする
 
     const formatMatch = !selectedFormat || song.format === selectedFormat;
 
